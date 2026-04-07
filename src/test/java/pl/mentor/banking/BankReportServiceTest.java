@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BankReportServiceTest {
 
@@ -85,4 +84,41 @@ public class BankReportServiceTest {
         assertTrue(plnAmounts.contains(new BigDecimal("50.00")));
     }
 
+    @Test
+    void shouldCountTransactionsAboveThresholdPerCurrency() {
+        var service = new BankReportService();
+        var transaction = List.of(
+                new Transaction(new BigDecimal("50.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("150.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("200.00"), "USD", LocalDateTime.now())
+        );
+
+        var result = service.countLargeTransactionsByCurrency(transaction, new BigDecimal("100.00"));
+
+        assertEquals(2L, result.size());
+        var plnAmounts = result.get("PLN");
+        assertEquals(1L, plnAmounts);
+    }
+
+    @Test
+    void shouldReturnMaxTransactionPercurrency(){
+        var service = new BankReportService();
+
+        var transaction = List.of(
+                new Transaction(new BigDecimal("100.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("500.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("200.00"), "USD", LocalDateTime.now()),
+                new Transaction(new BigDecimal("1000.00"), "USD", LocalDateTime.now())
+        );
+
+        var result = service.getMostExpensiveTransactionByCurrency(transaction);
+
+        assertEquals(2, result.size());
+        assertNotNull(result.get("PLN"), "Mapa powinna zawierać klucz PLN - sprawdź literówki w danych!");
+        var plnResult = result.get("PLN");
+        assertTrue(plnResult.isPresent(), "Optional dla PLN nie powinien być pusty");
+
+        assertTrue(new BigDecimal("500.00").compareTo(plnResult.get().amount()) == 0);
+        assertEquals(0, new BigDecimal("500.00").compareTo(plnResult.get().amount()));
+    }
 }

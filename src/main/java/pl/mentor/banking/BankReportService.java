@@ -47,4 +47,19 @@ public class BankReportService {
                 ));
     }
 
+    public Map<String, Long> countLargeTransactionsByCurrency(List<Transaction> transactions, BigDecimal threshold){
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::currency, // 1. Po czym grupujemy (Klucz)
+                        Collectors.filtering(t-> t.amount().compareTo(threshold)>0, Collectors.counting())
+                ));
+    }
+
+    public Map<String, Optional<Transaction>>getMostExpensiveTransactionByCurrency(List<Transaction> transactions){
+        return transactions.stream()
+                .collect(Collectors.groupingBy(Transaction::currency,
+                        Collectors.maxBy(Comparator.comparing(Transaction::amount) )
+                        ));
+    }
+
 }
