@@ -51,4 +51,38 @@ public class BankReportServiceTest {
         assertTrue(BigDecimal.ZERO.compareTo(result) == 0, "Wynik powinien być matematycznie równy zero");
     }
 
+    @Test
+    void shouldGroupAndSumByCurrency(){
+        var service = new BankReportService();
+        var transaction = List.of(
+                new Transaction(new BigDecimal("100.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("50.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("10.12"), "USD", LocalDateTime.now())
+        );
+
+        var result = service.sumByCurrency(transaction);
+        assertEquals(2, result.size());
+        assertTrue(result.get("PLN").compareTo(new BigDecimal("150.00"))==0);
+        assertTrue(result.get("USD").compareTo(new BigDecimal("10.12"))==0);
+
+    }
+
+    @Test
+    void shouldReturnMapWithListOfAmountsForEachCurrency() {
+        var service = new BankReportService();
+        var transaction = List.of(
+                new Transaction(new BigDecimal("100.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("50.00"), "PLN", LocalDateTime.now()),
+                new Transaction(new BigDecimal("10.12"), "USD", LocalDateTime.now())
+        );
+
+        var result = service.currencyList(transaction);
+
+        assertEquals(2, result.size());
+        var plnAmounts = result.get("PLN");
+        assertEquals(2, plnAmounts.size());
+        assertTrue(plnAmounts.contains(new BigDecimal("100.00")));
+        assertTrue(plnAmounts.contains(new BigDecimal("50.00")));
+    }
+
 }
