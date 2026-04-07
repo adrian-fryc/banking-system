@@ -24,4 +24,6 @@ public class BankReportService {
                 .max(Comparator.comparingInt(t -> t.currency().length()))
                 ;
     }
+
+
 }
