@@ -1,0 +1,20 @@
+POST http://localhost:8080/api/reports/calculate
+Content-Type: application/json
+
+[
+  {
+    "amount": 100.00,
+    "currency": "PLN",
+    "timestamp": "2024-05-20T12:00:00"
+  },
+  {
+    "amount": 300.00,
+    "currency": "PLN",
+    "timestamp": "2024-05-20T12:00:00"
+  },
+  {
+    "amount": 50.00,
+    "currency": "USD",
+    "timestamp": "2024-05-20T12:00:00"
+  }
+]

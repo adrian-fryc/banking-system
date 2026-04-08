@@ -1,10 +1,10 @@
 package pl.mentor.banking;
 
 import org.junit.jupiter.api.Test;
+import pl.mentor.banking.model.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -118,7 +118,7 @@ public class BankReportServiceTest {
         var plnResult = result.get("PLN");
         assertTrue(plnResult.isPresent(), "Optional dla PLN nie powinien być pusty");
 
-        assertTrue(new BigDecimal("500.00").compareTo(plnResult.get().amount()) == 0);
-        assertEquals(0, new BigDecimal("500.00").compareTo(plnResult.get().amount()));
+        assertTrue(new BigDecimal("500.00").compareTo(plnResult.get().getAmount()) == 0);
+        assertEquals(0, new BigDecimal("500.00").compareTo(plnResult.get().getAmount()));
     }
 }

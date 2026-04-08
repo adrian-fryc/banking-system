@@ -3,7 +3,7 @@ package pl.mentor.banking;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record Transaction(
+public record TransactionRecord(
         BigDecimal amount,
         String currency,
         LocalDateTime timestamp
