@@ -1,10 +1,12 @@
 package pl.mentor.banking;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pl.mentor.banking.model.Transaction;
 import pl.mentor.banking.repository.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,4 +41,26 @@ public class ReportService {
     public List<Transaction> findByCurrency(String currency){
         return transactionRepository.findByCurrency(currency);
     }
+
+    public List<Transaction> findByAmountGreaterThan(BigDecimal amount){
+        return transactionRepository.findByAmountGreaterThan(amount);
+    }
+
+    public List<Transaction> findByCurrencyAndAmountGreaterThan(String currency, BigDecimal amount){
+        return transactionRepository.findByCurrencyAndAmountGreaterThan(currency, amount);
+    }
+
+    public List<Transaction> findByTimestampAfter(LocalDateTime date){
+        return transactionRepository.findByTimestampAfter(date);
+    }
+
+    public List<Transaction> findByAmountLessThan(BigDecimal amount){
+        return transactionRepository.findByAmountLessThan(amount);
+    }
+
+    @Transactional
+    public void deleteByCurrency(String currency){
+        transactionRepository.deleteByCurrency(currency);
+    }
+
 }

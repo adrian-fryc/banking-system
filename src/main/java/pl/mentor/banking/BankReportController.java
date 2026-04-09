@@ -52,13 +52,36 @@ public class BankReportController {
 
     @GetMapping("/all")
     public List<Transaction> getHistory(){
-
         return reportService.getAllTransactions();
     }
 
     @GetMapping("/filter")
     public List<Transaction> getFilteredHistory(@RequestParam String currency){
         return reportService.findByCurrency(currency);
+    }
 
+    @GetMapping("/grater")
+    public List<Transaction> getAmountGreaterThan(@RequestParam BigDecimal amount){
+        return reportService.findByAmountGreaterThan(amount);
+    }
+
+    @GetMapping("/greaterCurrency")
+    public List<Transaction> getCurrencyAndAmountGreaterThan(@RequestParam String currency, @RequestParam(required = false) BigDecimal amount){
+        return reportService.findByCurrencyAndAmountGreaterThan(currency, amount);
+    }
+
+    @GetMapping("/date")
+    public List<Transaction> getHistoryAfterDate(@RequestParam LocalDateTime date){
+        return reportService.findByTimestampAfter(date);
+    }
+
+    @GetMapping("/less")
+    public List<Transaction> getAmountLessThan(@RequestParam BigDecimal amount){
+        return reportService.findByAmountLessThan(amount);
+    }
+
+    @DeleteMapping("/deleteCurrency/{currency}")
+    public void deleteByCurrency(@PathVariable String currency){
+        reportService.deleteByCurrency(currency);
     }
 }
