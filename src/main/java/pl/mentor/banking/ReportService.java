@@ -63,4 +63,14 @@ public class ReportService {
         transactionRepository.deleteByCurrency(currency);
     }
 
+    @Transactional
+    public void updateAmount(Long id, BigDecimal newAmount){
+        var record = transactionRepository.findById(id);
+        if(record.isPresent()){
+            Transaction updatedRecord = record.get();
+            updatedRecord.setAmount(newAmount);
+            transactionRepository.save(updatedRecord);
+        }
+    }
+
 }

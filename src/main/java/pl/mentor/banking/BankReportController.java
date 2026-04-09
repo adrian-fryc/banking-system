@@ -84,4 +84,9 @@ public class BankReportController {
     public void deleteByCurrency(@PathVariable String currency){
         reportService.deleteByCurrency(currency);
     }
+
+    @PutMapping("/update/{id}")
+    public void setAmount(@PathVariable  Long id, @RequestParam BigDecimal newAmount){
+        reportService.updateAmount(id, newAmount);
+    }
 }
