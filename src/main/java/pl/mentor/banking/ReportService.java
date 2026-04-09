@@ -65,12 +65,10 @@ public class ReportService {
 
     @Transactional
     public void updateAmount(Long id, BigDecimal newAmount){
-        var record = transactionRepository.findById(id);
-        if(record.isPresent()){
-            Transaction updatedRecord = record.get();
-            updatedRecord.setAmount(newAmount);
-            transactionRepository.save(updatedRecord);
-        }
+        transactionRepository.findById(id).ifPresent(record -> {
+            record.setAmount(newAmount);
+            transactionRepository.save(record);
+        });
     }
 
 }
