@@ -1,6 +1,8 @@
-package pl.mentor.banking.model;
+package pl.mentor.banking.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,8 +14,16 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Positive
     private BigDecimal amount;
+
+    @NotBlank
+    @Size(min=3, max=3)
     private String currency;
+
+    @NotNull
+    @PastOrPresent
     private LocalDateTime timestamp;
 
     // 1. Pusty konstruktor - BEZWZGLĘDNIE WYMAGANY przez JPA

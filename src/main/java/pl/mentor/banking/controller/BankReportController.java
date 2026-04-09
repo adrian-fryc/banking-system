@@ -1,7 +1,13 @@
-package pl.mentor.banking;
+package pl.mentor.banking.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.mentor.banking.model.Transaction;
+import pl.mentor.banking.model.dto.TransactionSummary;
+import pl.mentor.banking.service.ReportService;
+import pl.mentor.banking.TransactionRecord;
+import pl.mentor.banking.model.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,14 +16,13 @@ import java.util.Map;
 
 @RestController // Mówi Springowi: "Ta klasa obsługuje zapytania HTTP i zwraca dane (zwykle JSON)"
 @RequestMapping("/api/reports") // Wszystkie adresy w tej klasie będą zaczynać się od /api/reports
+@Validated
 public class BankReportController {
 
-    private final BankReportService bankReportService;
     private final ReportService reportService;
 
 
-    public BankReportController(BankReportService bankReportService, ReportService reportService) {
-        this.bankReportService = bankReportService;
+    public BankReportController(ReportService reportService) {
         this.reportService = reportService;
     }
 
@@ -36,7 +41,7 @@ public class BankReportController {
         );
 
         // Wywołujemy Twoją logikę streamową!
-        return bankReportService.sumByCurrency(mockTransactions);
+        return reportService.sumByCurrency(mockTransactions);
     }
 
     @GetMapping("/single")
@@ -45,7 +50,7 @@ public class BankReportController {
     }
 
     @PostMapping("/calculate")
-    public Map<String, BigDecimal> calculateSum(@RequestBody List<Transaction> transactions) {
+    public Map<String, BigDecimal> calculateSum(@Valid @RequestBody List<Transaction> transactions) {
         // Spring bierze JSON-a z Twojego zapytania i zamienia go na listę obiektów Transaction
         return reportService.calculateAndSave(transactions);
     }
@@ -56,37 +61,42 @@ public class BankReportController {
     }
 
     @GetMapping("/filter")
-    public List<Transaction> getFilteredHistory(@RequestParam String currency){
+    public List<Transaction> getFilteredHistory(@Valid @RequestParam String currency){
         return reportService.findByCurrency(currency);
     }
 
     @GetMapping("/grater")
-    public List<Transaction> getAmountGreaterThan(@RequestParam BigDecimal amount){
+    public List<Transaction> getAmountGreaterThan(@Valid @RequestParam BigDecimal amount){
         return reportService.findByAmountGreaterThan(amount);
     }
 
     @GetMapping("/greaterCurrency")
-    public List<Transaction> getCurrencyAndAmountGreaterThan(@RequestParam String currency, @RequestParam(required = false) BigDecimal amount){
+    public List<Transaction> getCurrencyAndAmountGreaterThan(@Valid @RequestParam String currency, @Valid @RequestParam(required = false) BigDecimal amount){
         return reportService.findByCurrencyAndAmountGreaterThan(currency, amount);
     }
 
     @GetMapping("/date")
-    public List<Transaction> getHistoryAfterDate(@RequestParam LocalDateTime date){
+    public List<Transaction> getHistoryAfterDate(@Valid @RequestParam LocalDateTime date){
         return reportService.findByTimestampAfter(date);
     }
 
     @GetMapping("/less")
-    public List<Transaction> getAmountLessThan(@RequestParam BigDecimal amount){
+    public List<Transaction> getAmountLessThan(@Valid @RequestParam BigDecimal amount){
         return reportService.findByAmountLessThan(amount);
     }
 
     @DeleteMapping("/deleteCurrency/{currency}")
-    public void deleteByCurrency(@PathVariable String currency){
+    public void deleteByCurrency(@Valid @PathVariable String currency){
         reportService.deleteByCurrency(currency);
     }
 
     @PutMapping("/update/{id}")
-    public void setAmount(@PathVariable  Long id, @RequestParam BigDecimal newAmount){
+    public void setAmount(@PathVariable  Long id, @RequestParam @Positive BigDecimal newAmount){
         reportService.updateAmount(id, newAmount);
+    }
+
+    @GetMapping("/summary")
+    public TransactionSummary getSummary(@RequestParam String currency) {
+        return reportService.getCurrencyReport(currency);
     }
 }
