@@ -1,5 +1,6 @@
 package pl.mentor.banking;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pl.mentor.banking.model.Transaction;
@@ -65,10 +66,10 @@ public class ReportService {
 
     @Transactional
     public void updateAmount(Long id, BigDecimal newAmount){
-        transactionRepository.findById(id).ifPresent(record -> {
-            record.setAmount(newAmount);
-            transactionRepository.save(record);
-        });
+        Transaction record = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transakcja o ID " + id + " nie istnieje!"));
+
+        record.setAmount(newAmount);
     }
 
 }
