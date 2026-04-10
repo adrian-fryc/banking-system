@@ -2,12 +2,15 @@ package pl.mentor.banking.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
+import pl.mentor.banking.validation.SupportedCurrency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
+//@Builder
 public class Transaction {
 
     @Id
@@ -20,6 +23,7 @@ public class Transaction {
 
     @NotBlank
     @Size(min=3, max=3)
+    @SupportedCurrency
     private String currency;
 
     @NotNull

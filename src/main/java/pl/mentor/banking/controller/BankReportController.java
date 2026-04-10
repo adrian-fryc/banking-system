@@ -1,5 +1,7 @@
 package pl.mentor.banking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -8,6 +10,7 @@ import pl.mentor.banking.model.dto.TransactionSummary;
 import pl.mentor.banking.service.ReportService;
 import pl.mentor.banking.TransactionRecord;
 import pl.mentor.banking.model.entity.Transaction;
+import pl.mentor.banking.validation.SupportedCurrency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +20,7 @@ import java.util.Map;
 @RestController // Mówi Springowi: "Ta klasa obsługuje zapytania HTTP i zwraca dane (zwykle JSON)"
 @RequestMapping("/api/reports") // Wszystkie adresy w tej klasie będą zaczynać się od /api/reports
 @Validated
+@Tag(name = "Raporty", description = "Zarządzanie raportami bankowymi")
 public class BankReportController {
 
     private final ReportService reportService;
@@ -96,7 +100,8 @@ public class BankReportController {
     }
 
     @GetMapping("/summary")
-    public TransactionSummary getSummary(@RequestParam String currency) {
+    @Operation(description = "Pobiera podsumowanie finansowe dla wybranej waluty")
+    public TransactionSummary getSummary(@RequestParam @SupportedCurrency String currency) {
         return reportService.getCurrencyReport(currency);
     }
 }
