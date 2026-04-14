@@ -1,9 +1,13 @@
 package pl.mentor.banking.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.mentor.banking.model.dto.TransactionSummary;
@@ -21,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/reports") // Wszystkie adresy w tej klasie będą zaczynać się od /api/reports
 @Validated
 @Tag(name = "Raporty", description = "Zarządzanie raportami bankowymi")
+@Slf4j
 public class BankReportController {
 
     private final ReportService reportService;
@@ -99,9 +104,26 @@ public class BankReportController {
         reportService.updateAmount(id, newAmount);
     }
 
-    @GetMapping("/summary")
-    @Operation(description = "Pobiera podsumowanie finansowe dla wybranej waluty")
-    public TransactionSummary getSummary(@RequestParam @SupportedCurrency String currency) {
-        return reportService.getCurrencyReport(currency);
+//    @GetMapping("/summary")
+//    @Operation(description = "Pobiera podsumowanie finansowe dla wybranej waluty")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Raport wygenerowany pomyślnie"),
+//            @ApiResponse(responseCode = "404", description = "Brak danych dla podanej waluty")
+//    })
+//    public TransactionSummary getSummary(@RequestParam @SupportedCurrency String currency) {
+//        return reportService.getCurrencyReport(currency);
+//    }
+
+    @GetMapping("/user/{userId}/{currency}")
+    @Operation(description = "Pobiera podsumowanie finansowe dla użytkownika oraz wybranej waluty")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Raport wygenerowany pomyślnie"),
+            @ApiResponse(responseCode = "404", description = "Brak danych dla podanej waluty")
+    })
+
+    @PreAuthorize("#userId == principal.id")
+    public TransactionSummary getUserReport(@PathVariable Long userId, @PathVariable @SupportedCurrency String currency) {
+        log.info("User ID: " + userId);
+        return reportService.getUserCurrencyReport(userId, currency);
     }
 }

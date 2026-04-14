@@ -21,9 +21,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByAmountLessThan(BigDecimal amount);
     void deleteByCurrency(String currency);
 
-    @Query("SELECT new pl.mentor.banking.model.dto.TransactionSummary(t.currency, SUM(t.amount), COUNT(t)) " +
-            "FROM Transaction t " +
-            "WHERE t.currency = :currency " +
-            "GROUP BY t.currency")
-    Optional<TransactionSummary> getSummaryForCurrency(@Param("currency") String currency);
+//    @Query("SELECT new pl.mentor.banking.model.dto.TransactionSummary(t.currency, SUM(t.amount), COUNT(t)) " +
+//            "FROM Transaction t " +
+//            "WHERE t.currency = :currency " +
+//            "GROUP BY t.currency")
+//    Optional<TransactionSummary> getSummaryForCurrency(@Param("currency") String currency);
+
+//    @Query("SELECT new pl.mentor.banking.model.dto.TransactionSummary(t.currency, SUM(t.amount), COUNT(t)) " +
+//            "FROM Transaction t " +
+//            "WHERE t.currency = :currency AND t.user.id = :userId " +
+//            "GROUP BY t.currency")
+//    Optional<TransactionSummary> getSummaryForUserAndCurrency(Long userId, String currency);
+
+    List<Transaction> findByUserId(Long userId);
 }

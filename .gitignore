@@ -6,6 +6,7 @@ target/
 target/
 .idea/
 *.iml
+README.md
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
